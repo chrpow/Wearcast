@@ -4,7 +4,10 @@
   #include <avr/power.h>
 #endif
 
-int clothesCounts[16][2];
+int clothesCounts[16][3];
+//t-shirt, sweater, rain jacket, coat, pants, shorts, umbrella, shoes, boots
+//hat, sunglasses, gloves, scarf
+
 #define pixelPin 6
 
 #define forwardButton A0
@@ -15,16 +18,9 @@ int clothesCounts[16][2];
 #define programButton A5
 #define washButton 13
 
-boolean sun;
-boolean snow;
-boolean mcloudy;
-boolean pcloudy;
-boolean fog;
-boolean rain;
-boolean pour;
-boolean hail;
-boolean thunder;
-boolean catastrophic;
+boolean weather[10]
+//sun, snow, mcloudy, pcloudy, fog, rain, pour, hail, thunder, catastrophic
+int temperature;
 
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(60, pixelPin, NEO_GRB + NEO_KHZ800);
 
