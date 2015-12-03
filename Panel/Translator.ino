@@ -1,13 +1,13 @@
-void communicateWithClock(){
-  if(arduinoSerial.available()){
-    //Code Here
-    displayStates();
-  }
-}
-
-void displayStates(){
-  
-}
-
-
+//void communicateWithClock(){
+//  if(arduinoSerial.available()){
+//    //Code Here
+//    displayStates();
+//  }
+//}
+//
+//void displayStates(){
+//  
+//}
+//
+//
 

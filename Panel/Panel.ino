@@ -4,50 +4,50 @@
   #include <avr/power.h>
 #endif
 
-int clothesCounts[16][3];
-//t-shirt, sweater, rain jacket, coat, pants, shorts, umbrella, shoes, boots
-//hat, sunglasses, gloves, scarf
-
 #define pixelPin 6
+#define buttons A5
+#define numClothesOptions 13
+#define numWeatherOptions 10
 
-#define forwardButton A0
-#define backButton A1
-#define plusButton A2
-#define minusButton A3
-#define onButton A4
-#define programButton A5
-#define washButton 13
+int clothesCounts[numClothesOptions][2];
+//t-shirt 0, sweater 1, rain jacket 2, coat 3, pants 4, shorts 5, umbrella 6, shoes 7,
+//boots 8, hat 9, sunglasses 10, gloves 11, scarf 12
 
-boolean weather[10]
+boolean forwardButton;
+boolean backButton;
+boolean plusButton;
+boolean minusButton;
+boolean onButton;
+boolean programButton;
+boolean washButton;
+
+boolean weather[numWeatherOptions];
 //sun, snow, mcloudy, pcloudy, fog, rain, pour, hail, thunder, catastrophic
 int temperature;
 
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(60, pixelPin, NEO_GRB + NEO_KHZ800);
+//Debug
+//Adafruit_NeoPixel strip = Adafruit_NeoPixel(60, pixelPin, NEO_GRB + NEO_KHZ800);
 
 void setup() {
   Serial.begin(9600);
   
   // Read in values from EEPROM
   initializeCounts();
-  
-  pinMode(forwardButton, INPUT);
-  pinMode(backButton, INPUT);
-  pinMode(plusButton, INPUT);
-  pinMode(minusButton, INPUT);
-  pinMode(onButton, INPUT);
-  pinMode(programButton, INPUT);
-  pinMode(washButton, INPUT);
 
-  strip.begin();
-  strip.setBrightness(255);
-  strip.show();
+//Debug
+//strip.begin();
+//strip.setBrightness(255);
+//strip.show();
 }
 
-void loop() {  
-  if(digitalRead(programButton)){
+void loop() { 
+  yayButtons();
+  
+  if(programButton){
     programmingMode();
   }
-  if(digitalRead(onButton)){
-    displayStates();
-  }
+  
+//  if(onButton){
+//    displayStates();
+//  }
 }
