@@ -27,41 +27,42 @@ SOFTWARE.
 #include <Time.h>
 
 // assign pins
-int digit1  = 37;   // 1 = common cathode(-) digit 1
-int digit2  = 35;  // 2 = common cathode(-) digit 2
-int dots    = 31;  // 4 = common cathode(-) L1, L2, L3 --L1 &amp; L2 are the : dots
-int digit3  = 27;  // 6 = common cathode(-) digit 3
-int digit4  = 23;   // 8 = common cathode(-) digit 4
+const int digit1  = 37;   // 1 = common cathode(-) digit 1
+const int digit2  = 35;   // 2 = common cathode(-) digit 2
+const int dots    = 31;   // 4 = common cathode(-) L1, L2, L3 --L1 and L2 are the : dots
+const int digit3  = 27;   // 6 = common cathode(-) digit 3
+const int digit4  = 23;   // 8 = common cathode(-) digit 4
 
-int A  = 32;   // 14 = anode A, L1
-int B  = 36;   // 16 = anode B, L2
-int C  = 30;   // 13 = anode C, L3
-int D  = 33;   //  3 = anode D
-int E  = 29;   //  5 = anode E
-int F  = 26;   // 11 = anode F
-int G  = 34;   // 15 = anode G
-int DP = 25;   //  7 = anode DP --decimal points
+const int A  = 32;        // 14 = anode A, L1
+const int B  = 36;        // 16 = anode B, L2
+const int C  = 30;        // 13 = anode C, L3
+const int D  = 33;        //  3 = anode D
+const int E  = 29;        //  5 = anode E
+const int F  = 26;        // 11 = anode F
+const int G  = 34;        // 15 = anode G
+const int DP = 25;        //  7 = anode DP --decimal points
 
-int set = 38;
-int alarm = 39;
-int down = 40;
-int up = 41;
+const int set = 38;   // button to set current time
+const int alarm = 39; // button to set alarm
+const int down = 40;  // button to decrement numbers on screen
+const int up = 41;    // button to increment numbers on screen
 
-int setState = 0;
-int alarmState = 0;
-int downState = 0;
-int upState = 0;
+const int buzzer = 48;    // alarm buzzer
+const int alarmMode = 42; // switch to turn the alarm functionality on or off
 
-int alarmHour;
-int alarmMin;
+int alarmHour; // hour of wake up time
+int alarmMin;  // minute of wake up time
 
 void setup() {
-  // Setup all digital outputs
+  // set up all digital outputs
+  // positions
   pinMode(digit1, OUTPUT);
   pinMode(digit2, OUTPUT);
   pinMode(digit3, OUTPUT);
   pinMode(digit4, OUTPUT);
   pinMode(dots, OUTPUT);
+
+  // segments
   pinMode(A, OUTPUT);
   pinMode(B, OUTPUT);
   pinMode(C, OUTPUT);
@@ -70,25 +71,42 @@ void setup() {
   pinMode(F, OUTPUT);
   pinMode(G, OUTPUT);
   pinMode(DP, OUTPUT);
-  //pinMode (mode_pin, INPUT);
+
+  //buzzer
+  pinMode(buzzer, OUTPUT);
+  
+  // set up all digital inputs
+  // programming buttons
+  pinMode(set, INPUT);
+  pinMode(alarm, INPUT);
+  pinMode(down, INPUT);
+  pinMode(up, INPUT);
+
+  // alarm on/off switch
+  pinMode(alarmMode, INPUT);
+
+  // initialize serial (debugging)
   Serial.begin(9600);
 }
 
 void loop() {
-  
+  // main loop
   while(true) {
-    setState = digitalRead(set);
-    alarmState = digitalRead(alarm);
-    showTime(1, minute() / 10);
-    showTime(2, minute() % 10);
-    if ((second() % 10) % 2 == 0) showTime(0, ':');
-    showTime(3, second() / 10);
-    showTime(4, second() % 10);
-    if (setState == HIGH) {
+      // need an "alarm enable" switch
+      // check if it is time to sound alarm
+    if(hour() == alarmHour && minute() == alarmMin && digitalRead(alarmMode) == HIGH) {
+      wakeUp(hour(), minute());
+    }
+
+    // show current time
+    displayTime(minute(), second());
+
+    // has set time or set alarm been pushed?
+    if (digitalRead(set) == HIGH) {
       delay(200);
       setFace();
     }
-    if (alarmState == HIGH) {
+    if (digitalRead(alarm) == HIGH) {
       delay(200);
       setAlarm();
     }

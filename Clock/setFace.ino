@@ -1,31 +1,28 @@
+// set current time on clockface
 void setFace() {
-  int hourMin = 0;
-  int currentHour = 0;
-  int currentMin = 0;
-  while(true) {
-    setState =   digitalRead(set);
-    downState =  digitalRead(down);
-    upState =    digitalRead(up);
-    
-    showTime(1, currentHour / 10);
-    showTime(2, currentHour % 10);
-    showTime(3, currentMin / 10);
-    showTime(4, currentMin % 10);
-    if (setState == HIGH) {
+  byte hourMin = 0; // 0: editing the hour, 1: editing the minute
+  
+  int currentHour = hour();
+  int currentMin = minute();
+  
+  while(true) {    
+    displayTime(currentHour, currentMin);
+
+    // if set is pressed, move to next digit or end programming mode
+    if (digitalRead(set) == HIGH) {
       if (hourMin == 0) {
         hourMin = 1;
         delay(200);
       }
       else {
         setTime(currentHour, currentMin, 0, 0, 0, 2015);
-        Serial.print(hour());
-        Serial.print(":");
-        Serial.println(minute());
         delay(200);
         return;
       }
     }
-    if (downState == HIGH) {
+
+    // decrement number
+    if (digitalRead(down) == HIGH) {
       if (hourMin == 0) {
         currentHour--;
         if (currentHour == -1) {
@@ -41,7 +38,9 @@ void setFace() {
         delay(150);
       }
     }
-    if (upState == HIGH) {
+
+    // increment number
+    if (digitalRead(up) == HIGH) {
       if (hourMin == 0) {
         currentHour = (currentHour + 1) % 24;
         delay(200);

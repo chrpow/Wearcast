@@ -1,12 +1,11 @@
-// LIGHT-UP A DIGIT
-// (Combines the next 3 functions into 1 simple call)
+// light up digit j at position k
 void showTime(byte k, char j) {
   position(k);
   turn(j);
   off();
 }
 
-// 7-SEGMENT DIGIT SELECTOR
+// selects the digit to light up
 void position(byte pos) {
   // DIGIT 1 --------------------
   if (pos == 1)
@@ -59,8 +58,7 @@ void position(byte pos) {
   }
 }
 
-// TURN OFF DISPLAY
-// (Eliminates "Light Shadows" from one digit to the next)
+// turns off display in between writes
 void off() {
   digitalWrite(A, HIGH);
   digitalWrite(B, HIGH);
@@ -72,7 +70,8 @@ void off() {
   digitalWrite(DP, HIGH);
   delayMicroseconds(50);
 }
-// DIGIT CREATION FUNCTIONS ------------
+
+// writes digit num to whatever position is active
 void turn(char num) {
   //-----------------------------// 0
   if (num == 0)
