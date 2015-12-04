@@ -22,9 +22,31 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************/
 
+#include <ArduinoJson.h>
 #include <SPI.h>
 #include <Ethernet.h>
 #include <Time.h>
+
+static char respBuf[4096];
+
+// weather API info
+
+#define WUNDERGROUND "api.wunderground.com"
+#define WU_API_KEY "0936c57b58cbf6bc" // weather underground API key
+#define WU_LOCATION "19104"           // zip code of clock. could implement IP locator
+
+// Ethernet info
+byte mac[] = { 0x90 , 0xA2 , 0xDA , 0x0E , 0x07 , 0xBE };
+IPAddress ip(192, 168, 0, 6); //TODO change to real address
+
+// HTTP request
+const char WUNDERGROUND_REQ[] =
+    "GET /api/" WU_API_KEY "/conditions/q/" WU_LOCATION ".json HTTP/1.1\r\n"
+    "User-Agent: ESP8266/0.1\r\n"
+    "Accept: */*\r\n"
+    "Host: " WUNDERGROUND "\r\n"
+    "Connection: close\r\n"
+    "\r\n";
 
 // assign pins
 const int digit1  = 37;   // 1 = common cathode(-) digit 1
@@ -85,11 +107,14 @@ void setup() {
   // alarm on/off switch
   pinMode(alarmMode, INPUT);
 
+  Ethernet.begin(mac, ip);
   // initialize serial (debugging)
   Serial.begin(9600);
 }
 
 void loop() {
+  // update weather at top of hour
+  if (minute() == 0) updateWeather();
   // main loop
   while(true) {
       // need an "alarm enable" switch
