@@ -30,8 +30,8 @@ SOFTWARE.
 
 #define pixelPin 6
 #define buttons A5
-#define numClothesOptions 13
-#define numWeatherOptions 10
+#define numClothesOptions 15
+#define numWeatherOptions 11
 
 int clothesCounts[numClothesOptions][2];
 //t-shirt 0, sweater 1, rain jacket 2, coat 3, pants 4, shorts 5, umbrella 6, shoes 7,

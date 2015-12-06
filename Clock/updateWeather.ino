@@ -1,60 +1,148 @@
 void updateWeather() {
+  // declare JSON object buffers
+  char temp[20];
+  char windSpeed[20];
+  char weather[40];
+  // clear transmission
+  transmission = "";
   // create connection w/ EthernetClient
   EthernetClient client;
   const int httpPort = 80;
+  TextFinder finder(client);
   // if connection fails
-  if (!client.connect(WUNDERGROUND, httpPort)) {
-    Serial.println("connection failed");
+  if (client.connect(WUNDERGROUND, httpPort)) {
+    Serial.println("connecting");
+    
+    // send the http request
+    Serial.print(WUNDERGROUND_REQ);
+    client.print(WUNDERGROUND_REQ);
+  }
+  else {
+    Serial.println("disconnecting");
     return;
   }
 
-  // This will send the http request to the server
-  Serial.print(WUNDERGROUND_REQ);
-  client.print(WUNDERGROUND_REQ);
-  client.flush();
-
-  // Collect http response headers and content from Weather Underground
-  // HTTP headers are discarded.
-  // The content is formatted in JSON and is left in respBuf.
-  int respLen = 0;
-  bool skip_headers = true;
-  while (client.connected() || client.available()) {
-    if (skip_headers) {
-      String aLine = client.readStringUntil('\n');
-      Serial.println(aLine);
-      // Blank line denotes end of headers
-      if (aLine.length() <= 1) {
-        skip_headers = false;
-      }
+  // parse JSON for temperature, wind, and weather
+  if (client.connected()) {
+    if (finder.getString("\"temp_f\":", ",", temp, 6) != 0) {
+      Serial.print("Temperature: ");
+      Serial.println(temp);
     }
     else {
-      int bytesIn;
-      bytesIn = client.read((uint8_t *)&respBuf[respLen], sizeof(respBuf) - respLen);
-      Serial.print("bytesIn "); Serial.println(bytesIn);
-      if (bytesIn > 0) {
-        respLen += bytesIn;
-        if (respLen > sizeof(respBuf)) respLen = sizeof(respBuf);
-      }
-      else if (bytesIn < 0) {
-        Serial.print("read error ");
-        Serial.println(bytesIn);
-      }
+      Serial.println("No temperature data");
     }
-    delay(1);
+    if (finder.getString("\"wind_mph\":", ",", windSpeed, 5) != 0) {
+      Serial.print("Wind Speed: ");
+      Serial.println(windSpeed);
+    }
+    else {
+      Serial.println("No wind data");
+    }
+    if (finder.getString("\"weather\":\"", "\",", weather, 20) != 0) {
+      Serial.print("Weather: ");
+      Serial.println(weather);
+    }
+    else {
+      Serial.println("No weather data");
+    }
   }
+  else {
+    Serial.println("Disconnected");
+  }
+  // end communication
   client.stop();
+  client.flush();
 
-  if (respLen >= sizeof(respBuf)) {
-    Serial.print(F("respBuf overflow "));
-    Serial.println(respLen);
-    return;
-  }
-  // Terminate the C string
-  respBuf[respLen++] = '\0';
-  Serial.print(F("respLen "));
-  Serial.println(respLen);
-  //Serial.println(respBuf);
+  // convert JSON buffers into usable data
+  int tempInt = atoi(temp);
+  char windChar = windToChar(atof(windSpeed));
+  char weatherChar = weatherToChar(weather);
 
+  // append data into transmission
+  transmission += tempInt;
+  transmission += windChar;
+  transmission += weatherChar;
+  transmission += clothesCalculator(tempInt, windChar, weatherChar); // determine clothes
   return;
+}
+
+// remove "Light/Heavy" from weather string
+String simplifyString(String s) {
+  if (s.startsWith("Light") || s.startsWith("Heavy")) {
+    return s.substring(6);
+  }
+  else return s;
+}
+
+void transmit(String transmission) {
+  BTSerial.print('<'); BTSerial.print(transmission); BTSerial.println('>');
+}
+
+// converts weather condition char from JSON into a single char for transmission String
+char weatherToChar(const char *weather) {
+  String w = simplifyString(String(weather));
+
+  if (w == "Drizzle" || w == "Spray" || w == "Rain Mist") {
+    return drizzle;
+  }
+  else if (w == "Rain" || w == "Rain Showers" || w == "Freezing Drizzle" ||
+           w == "Freezing Rain" || w == "Unknown Precipitation") {
+    return rain;
+  }
+  else if (w == "Snow" || w == "Snow Grains" || w == "Low Drifting Snow" ||
+           w == "Blowing Snow" || w == "Snow Showers" ||
+           w == "Snow Blowing Snow Mist") {
+    return snow;
+  }
+  else if (w == "Ice Crystals" || w == "Ice Pellets" || w == "Hail" ||
+           w == "Ice Pellet Showers" || w == "Hail Showers" ||
+           w == "Small Hail Showers" || w == "Small Hail") {
+    return hail;
+  }
+  else if (w == "Mist" || w == "Fog" || w == "Fog Patches" ||
+           w == "Freezing Fog" || w == "Patches of Fog" ||
+           w == "Shallow Fog" || w == "Freezing Fog" ||
+           w == "Partial Fog" || w == "Haze") {
+    return fog;
+  }
+  else if (w == "Smoke" || w == "Volcanic Ash" || w == "Widespread Dust" ||
+           w == "Sand" || w == "Dust Whirls" || w == "Sandstorm" ||
+           w == "Low Drifting Widespread Dust" ||
+           w == "Low Drifting Sand" || w == "Blowing Widespread Dust" ||
+           w == "Blowing Sand") {
+    return danger;
+  }
+  else if (w == "Overcast" || w == "Mostly Cloudy" ||
+           w == "Funnel Cloud") {
+    return cloudy;
+  }
+  else if (w == "Clear") {
+    return sunny;
+  }
+  else if (w == "Partly Cloudy" || w == "Scattered Clouds") {
+    return partlyCloudy;
+  }
+  else if (w == "Thunderstorm") {
+    return lightning;
+  }
+  else if (w == "Thunderstorms and Rain") {
+    return lightningAndRain;
+  }
+  else if (w == "Thunderstorms and Snow") {
+    return lightningAndSnow;
+  }
+  else if (w == "Thunderstorms and Ice Pellets" ||
+           w == "Thunderstorms with Hail" ||
+           w == "Thunderstorms with Small Hail") {
+    return lightningAndHail;
+  }
+  else return error;
+}
+
+// converts float wind speed into char for transmission String
+char windToChar(float windSpeed) {
+  if (windSpeed < 11) return 0;
+  else if (windSpeed >= 11 && windSpeed < 34) return windy;
+  else return danger;
 }
 
