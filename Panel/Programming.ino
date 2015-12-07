@@ -54,10 +54,10 @@ void programmingMode(){
     //leave programming mode
     yayButtons();
     if(programButton){
-//      for (int i=0; i < strip.numPixels(); i++) {
-//        strip.setPixelColor(i, 0, 0, 0);
-//      }
-//      strip.show();    
+      for (int i=0; i < strip.numPixels(); i++) {
+        strip.setPixelColor(i, 0, 0, 0);
+      }
+      strip.show();    
       completed = true;
     }
 
