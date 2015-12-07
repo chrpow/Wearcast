@@ -31,12 +31,19 @@ SOFTWARE.
   #include <avr/power.h>
 #endif
 
+<<<<<<< HEAD
 #define pixelPin 11
 #define buttons A3
 #define numClothesOptions 15
 #define numWeatherOptions 11
 
 LiquidCrystal lcd(3,2 ,4);
+=======
+#define pixelPin 6
+#define buttons A5
+#define numClothesOptions 15
+#define numWeatherOptions 11
+>>>>>>> 38a0557c66dfd948e65981074a3f07e26a393f21
 
 int clothesCounts[numClothesOptions][2];
 //gloves 0, boots 1, umbrella 2, glasses 3, shorts 4, pants 5
