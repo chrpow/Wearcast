@@ -23,19 +23,29 @@ SOFTWARE.
 ******************************/
 
 #include <EEPROM.h>
+#include <Wire.h>
 #include <Adafruit_NeoPixel.h>
+#include <LiquidCrystal.h> //needs new liquidcrystal library replaced in arduino inherent lib
+
 #ifdef __AVR__
   #include <avr/power.h>
 #endif
 
-#define pixelPin 6
-#define buttons A5
-#define numClothesOptions 13
-#define numWeatherOptions 10
+#define pixelPin 11
+#define buttons A3
+#define numClothesOptions 15
+#define numWeatherOptions 11
+
+LiquidCrystal lcd(3,2 ,4);
 
 int clothesCounts[numClothesOptions][2];
-//t-shirt 0, sweater 1, rain jacket 2, coat 3, pants 4, shorts 5, umbrella 6, shoes 7,
-//boots 8, hat 9, sunglasses 10, gloves 11, scarf 12
+//gloves 0, boots 1, umbrella 2, glasses 3, shorts 4, pants 5
+//tshirt 6, sweater 7, rainjacket 8, hat 9, shoes 10, scarf 11
+//skirt 12, coat 13, longsleeve 19
+
+boolean weatherStates[numWeatherOptions];
+//cloudy 14, fog 15, wind 16, lightning 17, hail 18, rain 20
+//drizzle 21, sunny 22, snow 23, pcloudy 24, danger 25
 
 boolean forwardButton;
 boolean backButton;
@@ -45,23 +55,23 @@ boolean onButton;
 boolean programButton;
 boolean washButton;
 
-boolean weather[numWeatherOptions];
-//sun, snow, mcloudy, pcloudy, fog, rain, pour, hail, thunder, catastrophic
 int temperature;
 
 //Debug
-//Adafruit_NeoPixel strip = Adafruit_NeoPixel(60, pixelPin, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(26, pixelPin, NEO_GRB + NEO_KHZ800);
 
 void setup() {
   Serial.begin(9600);
+  lcd.begin(20, 4);
+
+  lcd.print("Welcome to Wearcast");
   
   // Read in values from EEPROM
   initializeCounts();
 
-//Debug
-//strip.begin();
-//strip.setBrightness(255);
-//strip.show();
+  strip.begin();
+  strip.setBrightness(255);
+  strip.show();
 }
 
 void loop() { 

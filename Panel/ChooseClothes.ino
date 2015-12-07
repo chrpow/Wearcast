@@ -1,7 +1,4 @@
 void chooseClothes(){
-  //Implement a point system to choose between clothes
-  //sun 0, snow 1, mcloudy 2, pcloudy 3, fog 4, rain 5, pour 6, 
-  //hail 7, thunder 8, catastrophic 9
 
   int scores[numClothesOptions];
   //t-shirt 0, sweater 1, rain jacket 2, coat 3, pants 4, shorts 5, umbrella 6, shoes 7,
@@ -12,7 +9,7 @@ void chooseClothes(){
   }
   
   //sun
-  if(weather[0]){
+  if(weatherStates[0]){
     scores[0] += 1; //tshirt
     scores[5] += 1; //shorts
     scores[7] += 1; //shoes
@@ -21,7 +18,7 @@ void chooseClothes(){
   }
 
   //snow
-  if(weather[1]){
+  if(weatherStates[1]){
     scores[2] += 1; //tshirt
     scores[3] += 1; //shorts
     scores[7] += 1; //shoes
