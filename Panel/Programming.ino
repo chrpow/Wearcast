@@ -1,81 +1,68 @@
 void programmingMode(){
+  lcd.clear();
+  lcd.print("Programming Mode");
+  
   yayButtons();
-  Serial.print("programming af");
-  delay(10);
+  
   int currentState = 0;
   Serial.println(currentState);
   delay(10);
+  
   boolean completed = false;
+
+//gloves 0, boots 1, umbrella 2, glasses 3, shorts 4, pants 5
+//tshirt 6, sweater 7, rainjacket 8, hat 9, shoes 10, scarf 11
+//skirt 12, coat 13, longsleeve 19
   
   while(!completed){
-    //strip.setPixelColor(currentStateToPixel(), 0, 255, 0);
-    //strip.show();
-    
     //update clothes item
-    if(forwardButton && currentState < 14){
+    if(forwardButton && currentState < numClothesOptions - 2){
       currentState++;
     }
-    if(backButton && currentState > 0){
+    if(forwardButton && currentState == numClothesOptions - 2){
+      currentState = 19;
+    }
+    
+    if(backButton && currentState > 0 && currentState < 19){
       currentState--;
+    }
+    if(backButton && currentState == 19){
+      currentState = numClothesOptions - 1;
     }
 
     //increment quantity in memory
-    if(plusButton){
-      clothesCounts[currentState][0] += 1;
-      EEPROM.write(((currentState + 1) * 2) - 1, clothesCounts[currentState][0]);
-      //also increment current clothes state
-      clothesCounts[currentState][1] += 1;
+    int modifiedState = currentState;
+    if(currentState == 19){
+      modifiedState = 14;
     }
-    if(minusButton && clothesCounts[currentState][0] > 0){
-      clothesCounts[currentState][0] -= 1;
-      EEPROM.write(((currentState + 1) * 2) - 1, clothesCounts[currentState][0]);
+    
+    if(plusButton){
+      clothesCounts[modifiedState][0] += 1;
+      EEPROM.write(((modifiedState + 1) * 2) - 1, clothesCounts[currentState][0]);
+      //also increment current clothes state
+      clothesCounts[modifiedState][1] += 1;
+    }
+    if(minusButton && clothesCounts[modifiedState][0] > 0){
+      clothesCounts[modifiedState][0] -= 1;
+      EEPROM.write(((modifiedState + 1) * 2) - 1, clothesCounts[modifiedState][0]);
 
       //also increment current clothes state
-      if(clothesCounts[currentState][1] > 0){
-        clothesCounts[currentState][1] -= 1; 
+      if(clothesCounts[modifiedState][1] > 0){
+        clothesCounts[modifiedState][1] -= 1; 
       }
     }
     //leave programming mode
     yayButtons();
     if(programButton){
-//      for (int i=0; i < strip.numPixels(); i++) {
-//        strip.setPixelColor(i, 0, 0, 0);
-//      }
-//      strip.show();    
+      for (int i=0; i < strip.numPixels(); i++) {
+        strip.setPixelColor(i, 0, 0, 0);
+      }
+      strip.show();    
       completed = true;
     }
+
+    pLEDtoLCD(currentState);
+    
   } 
 }
-
-//Fill in values --> values of clothes LEDs on board.
-int currentStateToPixel(int currentState){
-  switch(currentState){
-  case 0:
-    return 5;
-  case 1:
-    return 5;
-  case 2:
-    return 5;
-  case 3:
-    return 5;
-  case 4:
-    return 5;
-  case 5:
-    return 5;
-  case 6:
-    return 5;
-  case 7:
-    return 5;
-  case 8:
-    return 5;
-  case 9:
-    return 5;
-  case 10:
-    return 5;
-  case 11:
-    return 5;
-  case 12:
-    return 5;
-  }
-}  
 
