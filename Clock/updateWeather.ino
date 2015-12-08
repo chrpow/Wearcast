@@ -1,15 +1,17 @@
-void updateWeather() {
+void updateWeather(bool isAlarm) {
   // declare JSON object buffers
   char temp[20];
   char windSpeed[20];
   char weather[40];
   // clear transmission
   transmission = "";
+  if (isAlarm) transmission += alarmChar; // char to symbolize alarm activation 
   // create connection w/ EthernetClient
   EthernetClient client;
   const int httpPort = 80;
   TextFinder finder(client);
-  // if connection fails
+
+  // send request
   if (client.connect(WUNDERGROUND, httpPort)) {
     Serial.println("connecting");
     
@@ -22,8 +24,15 @@ void updateWeather() {
     return;
   }
 
-  // parse JSON for temperature, wind, and weather
+  // parse JSON response for weather, temperature, and wind
   if (client.connected()) {
+    if (finder.getString("weather\":\"", "\",", weather, 20) != 0) {
+      Serial.print("Weather: ");
+      Serial.println(weather);
+    }
+    else {
+      Serial.println("No weather data");
+    }
     if (finder.getString("\"temp_f\":", ",", temp, 6) != 0) {
       Serial.print("Temperature: ");
       Serial.println(temp);
@@ -38,13 +47,6 @@ void updateWeather() {
     else {
       Serial.println("No wind data");
     }
-    if (finder.getString("\"weather\":\"", "\",", weather, 20) != 0) {
-      Serial.print("Weather: ");
-      Serial.println(weather);
-    }
-    else {
-      Serial.println("No weather data");
-    }
   }
   else {
     Serial.println("Disconnected");
@@ -58,11 +60,21 @@ void updateWeather() {
   char windChar = windToChar(atof(windSpeed));
   char weatherChar = weatherToChar(weather);
 
+  Serial.print("tempInt: "); Serial.println(tempInt);
+  Serial.print("windChar: "); Serial.println(windChar);
+  Serial.print("weatherChar: "); Serial.println(weatherChar);
+  Serial.println(clothesCalculator(tempInt, windChar, weatherChar));
+
   // append data into transmission
-  transmission += tempInt;
-  transmission += windChar;
-  transmission += weatherChar;
-  transmission += clothesCalculator(tempInt, windChar, weatherChar); // determine clothes
+  transmission = transmission + tempInt; // temperature
+  if (windChar != 0) {
+    transmission = transmission + windChar; // wind status
+  }
+  transmission = transmission + weatherChar // weather
+  + clothesCalculator(tempInt, windChar, weatherChar); // clothes
+  
+  // transmit data
+  transmit(transmission);
   return;
 }
 
@@ -76,6 +88,7 @@ String simplifyString(String s) {
 
 void transmit(String transmission) {
   BTSerial.print('<'); BTSerial.print(transmission); BTSerial.println('>');
+  Serial.print('<'); Serial.print(transmission); Serial.println('>');
 }
 
 // converts weather condition char from JSON into a single char for transmission String

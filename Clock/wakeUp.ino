@@ -3,7 +3,7 @@ void wakeUp(int currentMin, int currentSec) {
   const int PITCH = 1000; // pitch of alarm
   while (true) {
     // continue to show time
-    displayTime(minute(), second());
+    displayTime();
 
     // sound buzzer every other second
     if (second() % 2 == 0) {

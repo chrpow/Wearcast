@@ -1,10 +1,18 @@
 // Writes the current time to the digital clock face
-void displayTime(int currentMin, int currentSec) {
-  showTime(1, currentMin / 10); // first digit
-  showTime(2, currentMin % 10);                     // second digit
-  if ((currentSec % 10) % 2 == 0) showTime(0, ':'); // colon
-  showTime(3, currentSec / 10);                     // third digit
-  showTime(4, currentSec % 10);                     // fourth digit
+void displayTime() {
+  showTime(1, hour() / 10);                         // first digit
+  showTime(2, hour() % 10);                         // second digit
+  if ((second() % 10) % 2 == 0) showTime(0, ':'); // colon
+  showTime(3, minute() / 10);                       // third digit
+  showTime(4, minute() % 10);                         // fourth digit
+}
+// writes the time inputted to clock face (for alarm setting)
+void displayTime(int currentHour, int currentMin) {
+  showTime(1, currentHour / 10);                         // first digit
+  showTime(2, currentHour % 10);                         // second digit
+  if ((second() % 10) % 2 == 0) showTime(0, ':'); // colon
+  showTime(3, currentMin / 10);                       // third digit
+  showTime(4, currentMin % 10);                         // fourth digit 
 }
 
 // light up digit j at position k

@@ -59,6 +59,7 @@ static char danger       = 'z';
 static char lightningAndRain = '{';
 static char lightningAndSnow = '|';
 static char lightningAndHail = '}';
+static char alarmChar = '$'; // char to symbolize an alarm activation
   
 // weather API info
 
@@ -69,11 +70,11 @@ static char respBuf[4096]; // response buffer
 #define WU_API_KEY "0936c57b58cbf6bc" // weather underground API key
 #define WU_LOCATION "19104"           // zip code of clock. could implement IP location
 const char WUNDERGROUND_REQ[] =       // HTTP request
-    "GET /api/" WU_API_KEY "/conditions/q/" WU_LOCATION ".json\r\n"
-    //"User-Agent: ESP8266/0.1\r\n"
-    //"Accept: */*\r\n"
+    "GET /api/" WU_API_KEY "/conditions/q/" WU_LOCATION ".json HTTP/1.1\r\n"
+    "User-Agent: ESP8266/0.1\r\n"
+    "Accept: */*\r\n"
     "HOST:" WUNDERGROUND "\r\n"
-    //"Connection: close\r\n"
+    "Connection: close\r\n"
     "\r\n";
     
 // Bluetooth info
@@ -81,7 +82,7 @@ SoftwareSerial BTSerial ( 2 , 3 ); //RX TX
 
 // Ethernet info
 byte mac[] = { 0x90 , 0xA2 , 0xDA , 0x0E , 0x07 , 0xBE };
-IPAddress ip(192, 168, 0, 11); //TODO change to real address
+IPAddress ip(192, 168, 1, 104); //TODO change to real address
 
 
 // assign pins
@@ -152,19 +153,18 @@ void setup() {
 }
 
 void loop() {
-  Serial.print(WUNDERGROUND_REQ);
-  // update weather at top of hour
-  if (minute() == 0) updateWeather();
-  // main loop
+      // main loop
   while(true) {
-      // need an "alarm enable" switch
-      // check if it is time to sound alarm
+    // update weather at top of hour
+    if (minute() == 0 && second() == 0) updateWeather(0);
+    // check if it is time to sound alarm
     if(hour() == alarmHour && minute() == alarmMin && digitalRead(alarmMode) == HIGH) {
+      updateWeather(1);
       wakeUp(hour(), minute());
     }
 
     // show current time
-    displayTime(minute(), second());
+    displayTime();
 
     // has set time or set alarm been pushed?
     if (digitalRead(set) == HIGH) {
