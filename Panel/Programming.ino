@@ -2,11 +2,12 @@ void programmingMode(){
   lcd.clear();
   lcd.print("Programming Mode");
   
-  yayButtons();
+  boolean yay = yayButtons();
   
   int currentState = 0;
+  pLEDLCD(currentState, HIGH);
+  
   Serial.println(currentState);
-  delay(10);
   
   boolean completed = false;
 
@@ -15,6 +16,12 @@ void programmingMode(){
 //skirt 12, coat 13, longsleeve 19
   
   while(!completed){
+    
+    yay = yayButtons();
+    Serial.println(yay);
+    
+    pLEDLCD(currentState, yay);
+    
     //update clothes item
     if(forwardButton && currentState < numClothesOptions - 2){
       currentState++;
@@ -51,18 +58,25 @@ void programmingMode(){
         clothesCounts[modifiedState][1] -= 1; 
       }
     }
+    
     //leave programming mode
-    yayButtons();
     if(programButton){
-      for (int i=0; i < strip.numPixels(); i++) {
-        strip.setPixelColor(i, 0, 0, 0);
-      }
+      strip.clear();
       strip.show();    
       completed = true;
     }
-
-    pLEDtoLCD(currentState);
     
   } 
+}
+
+void wearStuff(){
+  for(int i = 0; i < 14; i++){
+    if(updateCloset && states[i]){
+      clothesCounts[i][1] -= 1;
+    }
+  }
+  if(updateCloset && states[19]){
+      clothesCounts[19][1] -= 1;
+  }
 }
 

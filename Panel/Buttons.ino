@@ -7,42 +7,33 @@ boolean yayButtons(){
   programButton = false;
   washButton = false;
 
-  delay(100);
-  int a = analogRead(buttons);
-  //Serial.println(a); //Debug
-  
-  //button 1
-  if(a > 800){
+  delay(120);
+    
+  if(analogRead(button1) < 500){
     forwardButton = true;
     return true;
   }
-  //button 2
-  else if(a > 425){
+  else if(analogRead(button2) < 500){
     backButton = true;
     return true;
   }
-  //button 3
-  else if(a > 320){
+  else if(analogRead(button3) < 500){
     plusButton = true;
     return true;
   }
-  //button 4
-  else if(a > 230){
+  else if(analogRead(button4) < 500){
     minusButton = true;
     return true;
   }
-  //button 5
-  else if(a > 185){
+  else if(analogRead(button5) < 500){
     onButton = true;
     return true;
   }
-  //button 6
-  else if(a > 150){
+  else if(analogRead(button6) < 500){
     programButton = true;
     return true;
   }
-  //button 7
-  else if(a > 130){
+  else if(!digitalRead(button7)){
     washButton = true;
     return true;
   }
