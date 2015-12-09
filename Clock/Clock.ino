@@ -101,13 +101,18 @@ const int F  = 28;        // 11 = anode F
 const int G  = 34;        // 15 = anode G
 const int DP = 25;        //  7 = anode DP --decimal points
 
-const int set   = 38;   // button to set current time
-const int alarm = 39; // button to set alarm
-const int down  = 40;  // button to decrement numbers on screen
-const int up    = 41;    // button to increment numbers on screen
+const int set   = 7;   // button to set current time
+const int alarm = 6; // button to set alarm
+const int down  = 5;  // button to decrement numbers on screen
+const int up    = 4;    // button to increment numbers on screen
 
 const int buzzer = 48;    // alarm buzzer
-const int alarmMode = 42; // switch to turn the alarm functionality on or off
+const int alarmMode = 8; // switch to turn the alarm functionality on or off
+
+// indicator LED's
+const int alarmLED   = 38;
+const int timeLED    = 39;
+const int weatherLED = 40;
 
 int alarmHour; // hour of wake up time
 int alarmMin;  // minute of wake up time
@@ -136,6 +141,15 @@ void setup() {
 
   //buzzer
   pinMode(buzzer, OUTPUT);
+
+  // indicator LED's
+  pinMode(alarmLED, OUTPUT);
+  pinMode(timeLED, OUTPUT);
+  pinMode(weatherLED, OUTPUT);
+
+  digitalWrite(alarmLED, LOW);
+  digitalWrite(timeLED, LOW);
+  digitalWrite(weatherLED, LOW);
   
   // set up all digital inputs
   // programming buttons
@@ -148,7 +162,7 @@ void setup() {
   pinMode(alarmMode, INPUT);
 
   Ethernet.begin(mac, ip); // initialize Ethernet
-  BTSerial.begin( 9600 );  // initialize bluetooth serial
+  BTSerial.begin(9600);  // initialize bluetooth serial
   Serial.begin(9600);      // initialize hardware serial (debugging)
 }
 
@@ -158,7 +172,7 @@ void loop() {
     // update weather at top of hour
     if (minute() == 0 && second() == 0) updateWeather(0);
     // check if it is time to sound alarm
-    if(hour() == alarmHour && minute() == alarmMin && digitalRead(alarmMode) == HIGH) {
+    if(hour() == alarmHour && minute() == alarmMin && second() < 5 && digitalRead(alarmMode) == HIGH) {
       updateWeather(1);
       wakeUp(hour(), minute());
     }
@@ -167,11 +181,11 @@ void loop() {
     displayTime();
 
     // has set time or set alarm been pushed?
-    if (digitalRead(set) == HIGH) {
+    if (digitalRead(set) == LOW) {
       delay(400);
       setFace();
     }
-    if (digitalRead(alarm) == HIGH) {
+    if (digitalRead(alarm) == LOW) {
       delay(400);
       setAlarm();
     }

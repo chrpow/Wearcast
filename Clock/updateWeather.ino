@@ -1,4 +1,6 @@
 void updateWeather(bool isAlarm) {
+  // turn on light
+  digitalWrite(weatherLED, HIGH);
   // declare JSON object buffers
   char temp[20];
   char windSpeed[20];
@@ -21,6 +23,8 @@ void updateWeather(bool isAlarm) {
   }
   else {
     Serial.println("disconnecting");
+    digitalWrite(weatherLED, LOW);
+    setTime(hour(), minute(), 1, 0, 0, 2015);
     return;
   }
 
@@ -63,7 +67,7 @@ void updateWeather(bool isAlarm) {
   Serial.print("tempInt: "); Serial.println(tempInt);
   Serial.print("windChar: "); Serial.println(windChar);
   Serial.print("weatherChar: "); Serial.println(weatherChar);
-  Serial.println(clothesCalculator(tempInt, windChar, weatherChar));
+  Serial.print("clothesChars: "); Serial.println(clothesCalculator(tempInt, windChar, weatherChar));
 
   // append data into transmission
   transmission = transmission + tempInt; // temperature
@@ -75,6 +79,7 @@ void updateWeather(bool isAlarm) {
   
   // transmit data
   transmit(transmission);
+  digitalWrite(weatherLED, LOW);
   return;
 }
 

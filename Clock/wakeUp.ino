@@ -16,9 +16,9 @@ void wakeUp(int currentMin, int currentSec) {
       noTone(buzzer);
       break;
     }
-    else if (digitalRead(alarm) == HIGH) {
+    else if (digitalRead(alarm) == LOW || digitalRead(alarmMode) == LOW) {
       noTone(buzzer);
-      delay(200);
+      delay(350);
       break;
     }
   }
