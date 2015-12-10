@@ -22,7 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************/
 #include <SoftwareSerial.h>
-#include <ArduinoJson.h>
 #include <SPI.h>
 #include <Ethernet.h>
 #include <Time.h>
@@ -162,8 +161,14 @@ void setup() {
   pinMode(alarmMode, INPUT);
 
   Ethernet.begin(mac, ip); // initialize Ethernet
-  BTSerial.begin(9600);  // initialize bluetooth serial
+  BTSerial.begin(115200);  // initialize bluetooth serial
   Serial.begin(9600);      // initialize hardware serial (debugging)
+  BTSerial.print("$");
+  BTSerial.print("$");
+  BTSerial.print("$");
+  delay(100);
+  BTSerial.println("U,9600,N");
+  BTSerial.begin(9600);
 }
 
 void loop() {
