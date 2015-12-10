@@ -60,16 +60,16 @@ void pLEDLCD(int currentState, boolean yay){
         strip.setPixelColor(currentState, 0, 255, 0);
         break;    
       case 12: 
-        lcd.print("Skirts"); lcd.setCursor(0, 2); lcd.print("In closet: "); lcd.print(clothesCounts[currentState][0]); lcd.setCursor(0, 3); lcd.print("Clean: " + clothesCounts[currentState][1]);
+        lcd.print("Skirts"); lcd.setCursor(0, 2); lcd.print("In closet: "); lcd.print(clothesCounts[currentState][0]); lcd.setCursor(0, 3); lcd.print("Clean: "); lcd.print(clothesCounts[currentState][1]);
         strip.setPixelColor(currentState, 0, 255, 0);
         break;   
       case 13: 
         lcd.print("Coats"); lcd.setCursor(0, 2); lcd.print("In closet: "); lcd.print(clothesCounts[currentState][0]); //lcd.setCursor(0, 3); lcd.print("Clean: " + clothesCounts[currentState][1]);
         strip.setPixelColor(currentState, 0, 255, 0);
         break;   
-      case 19: 
-        lcd.print("Long Sleeves"); lcd.setCursor(0, 2); lcd.print("In closet: "); lcd.print(clothesCounts[14][0]); lcd.setCursor(0, 3); lcd.print("Clean: " + clothesCounts[14][1]);
-        strip.setPixelColor(currentState, 0, 255, 0);
+      case 14: 
+        lcd.print("Long Sleeves"); lcd.setCursor(0, 2); lcd.print("In closet: "); lcd.print(clothesCounts[14][0]); lcd.setCursor(0, 3); lcd.print("Clean: "); lcd.print(clothesCounts[14][1]);
+        strip.setPixelColor(19, 0, 255, 0);
         break; 
     } 
     strip.show();  
@@ -89,6 +89,36 @@ void bLEDLCD(){
         }
         else{
           strip.setPixelColor(i, 0, 255, 0);
+        }
+
+        if(clothesCounts[14][1] < 2){
+          strip.setPixelColor(19, 255, 0, 0);
+        }
+        else if(clothesCounts[14][1] < 5){
+          strip.setPixelColor(19, 255, 255, 0);
+        }
+        else{
+          strip.setPixelColor(19, 0, 255, 0);
+        }
+      }
+      else if(i == 22 || i == 17 || i == 15 || i == 14 || i == 24 || i == 25){
+        if(states[22]){
+          strip.setPixelColor(22, 255, 255, 0);
+        }
+        if(states[17]){
+          strip.setPixelColor(17, 255, 255, 0);
+        }
+        if(states[15]){
+          strip.setPixelColor(15, 255, 255, 255);
+        }
+        if(states[14]){
+          strip.setPixelColor(14, 255, 255, 255);
+        }
+        if(states[24]){
+          strip.setPixelColor(24, 255, 255, 255);
+        }
+        if(states[25]){
+          strip.setPixelColor(25, 255, 0, 0);
         }
       }
       else{

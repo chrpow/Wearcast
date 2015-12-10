@@ -17,11 +17,6 @@ void programmingMode(){
   
   while(!completed){
     
-    yay = yayButtons();
-    Serial.println(yay);
-    
-    pLEDLCD(currentState, yay);
-    
     //update clothes item
     if(forwardButton && currentState < numClothesOptions - 2){
       currentState++;
@@ -60,13 +55,22 @@ void programmingMode(){
     }
     
     //leave programming mode
-    if(programButton){
-      strip.clear();
-      strip.show();    
+    if(programButton){   
       completed = true;
     }
-    
+
+    pLEDLCD(modifiedState, yay);
+    yay = yayButtons();
   } 
+    lcd.clear();
+    lcd.print("Welcome to Wearcast");
+    lcd.setCursor(0, 1);
+    lcd.print("Temperature");
+    lcd.setCursor(0, 2);
+    lcd.print(temperature);
+      
+    strip.clear();
+    strip.show(); 
 }
 
 void wearStuff(){

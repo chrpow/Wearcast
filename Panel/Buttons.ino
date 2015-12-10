@@ -7,7 +7,7 @@ boolean yayButtons(){
   programButton = false;
   washButton = false;
 
-  delay(120);
+  delay(200);
     
   if(analogRead(button1) < 500){
     forwardButton = true;

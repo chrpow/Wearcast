@@ -3,24 +3,27 @@ void checkBluetooth(){
   String info = "";
   
   while(bluetooth.available() > 0){
+    Serial.print(",");
     info += (char)bluetooth.read();
   }
   Serial.print(info);
 
-  // info = "<$45abcdefghkfnt>"; //DEBUG
+   //info = "<$45abcdefghijklmnopqrstuvwxyz>"; //DEBUG
 
 
-  temperature = "";
+  
   if(info.length() > 0){
+    temperature = "";
     newTemp = true;
     for(int i = 0; i < info.length(); i++){
       if(info.charAt(i) >= '0' && info.charAt(i) <= '9'){
         temperature += info.charAt(i);
       }
     }
+    temperature += "F";
   }
 
-  Serial.print(temperature);
+  //Serial.print(temperature);
 
   for(int i = 0; i < info.length(); i++){   
     switch(info.charAt(i)){

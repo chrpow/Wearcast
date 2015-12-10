@@ -3,7 +3,7 @@ void initializeCounts(){
     delay(10);
       int j = 0;
       for(int i = 0; i < numClothesOptions * 2; i += 2){
-        Serial.print("l");
+        //Serial.print("l");
         delay(5);
         clothesCounts[j][0] = EEPROM.read(i + 1);// - '0';
         clothesCounts[j][1] = EEPROM.read(i + 2);// - '0';

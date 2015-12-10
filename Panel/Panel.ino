@@ -85,6 +85,12 @@ void setup() {
   
   Serial.begin(9600);
   lcd.begin(20, 4);
+  bluetooth.begin(115200);
+  bluetooth.print("$");  // Print three times individually
+  bluetooth.print("$");
+  bluetooth.print("$");  // Enter command mode
+  delay(100);  // Short delay, wait for the Mate to send back CMD
+  bluetooth.println("U,9600,N");
   bluetooth.begin(9600);
 
   lcd.print("Welcome to Wearcast");
@@ -119,7 +125,7 @@ void loop() {
     }
     else{
       lightsOn = true;
-      strip.setBrightness(0);
+      strip.setBrightness(255);
     }
   }
 
@@ -129,5 +135,11 @@ void loop() {
     lcd.print("Temperature");
     lcd.setCursor(0, 2);
     lcd.print(temperature);
+  }
+
+  if(washButton){
+    for(int i = 0; i < numClothesOptions; i++){
+      clothesCounts[i][1] = clothesCounts[i][0];
+    }
   }
 }
