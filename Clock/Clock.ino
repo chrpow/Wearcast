@@ -161,14 +161,8 @@ void setup() {
   pinMode(alarmMode, INPUT);
 
   Ethernet.begin(mac, ip); // initialize Ethernet
-  BTSerial.begin(115200);  // initialize bluetooth serial
-  Serial.begin(9600);      // initialize hardware serial (debugging)
-  BTSerial.print("$");
-  BTSerial.print("$");
-  BTSerial.print("$");
-  delay(100);
-  BTSerial.println("U,9600,N");
-  BTSerial.begin(9600);
+  Serial.begin(9600);      // initialize hardware serial
+  BTSerial.begin(9600);    // initialize Bluetooth
 }
 
 void loop() {
